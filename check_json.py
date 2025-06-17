@@ -1,10 +1,34 @@
+# Run this cell in Google Colab
+
 import zipfile
 import json
-import sys
-import os
 import io
+import os
+import tempfile
+import urllib.request
+from urllib.parse import urlparse
+from google.colab import files
+
+def download_zip(url):
+    """
+    Downloads a ZIP file from a URL to a temporary file.
+    Returns the path to the temporary file.
+    """
+    try:
+        with urllib.request.urlopen(url) as response:
+            if response.status != 200:
+                raise Exception(f"Failed to download file. HTTP status: {response.status}")
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".zip") as tmp_file:
+                tmp_file.write(response.read())
+                return tmp_file.name
+    except Exception as e:
+        print(f"Download error: {e}")
+        return None
 
 def get_json_keys_from_zip(zip_path):
+    """
+    Extracts top-level keys from JSON files inside a ZIP archive.
+    """
     key_map = {}
 
     with zipfile.ZipFile(zip_path, 'r') as zip_ref:
@@ -17,11 +41,10 @@ def get_json_keys_from_zip(zip_path):
                 continue
 
             try:
-                # Use buffered reader for large files
                 with zip_ref.open(file_info) as raw:
                     buffered_reader = io.TextIOWrapper(raw, encoding='utf-8', errors='ignore')
-                    # Use JSON streaming approach, expecting top-level object only
                     data = json.load(buffered_reader)
+
                     if isinstance(data, dict):
                         key_map[filename] = list(data.keys())
                     else:
@@ -31,18 +54,20 @@ def get_json_keys_from_zip(zip_path):
 
     return key_map
 
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print(f"Usage: python {os.path.basename(__file__)} <zip_file_path>", file=sys.stderr)
-        sys.exit(1)
+# --- Prompt and Run ---
+zip_input = input("Enter ZIP file URL or local filename (or upload if not already): ").strip()
 
-    zip_file = sys.argv[1]
+if zip_input.startswith("http://") or zip_input.startswith("https://"):
+    zip_path = download_zip(zip_input)
+else:
+    if not os.path.isfile(zip_input):
+        print("File not found locally. Please upload it now.")
+        uploaded = files.upload()
+        zip_input = list(uploaded.keys())[0]
+    zip_path = zip_input
 
-    if not os.path.isfile(zip_file):
-        print(f"Error: File not found - {zip_file}", file=sys.stderr)
-        sys.exit(1)
-
-    result = get_json_keys_from_zip(zip_file)
-
-    # Output as pretty JSON (good for both humans and machines)
+if zip_path and os.path.isfile(zip_path):
+    result = get_json_keys_from_zip(zip_path)
     print(json.dumps(result, indent=2))
+else:
+    print("Failed to process the ZIP file.")
