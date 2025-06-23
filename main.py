@@ -9,6 +9,7 @@ import re
 from spacy.matcher import PhraseMatcher
 from spacy.cli import download
 from spacy.util import is_package
+import sys
 
 # Load environment variables from .env
 load_dotenv()
@@ -143,14 +144,23 @@ def extract_metadata_phrases(text, key_phrases=None):
 
 # === MAIN USAGE ===
 if __name__ == "__main__":
-    pdf_text = extract_pdf_text("contract.pdf")
+    if len(sys.argv) != 2:
+        print("Usage: python main.py <pdf_file_path>")
+        sys.exit(1)
+
+    pdf_file_path = sys.argv[1]
+    pdf_text = extract_pdf_text(pdf_file_path)
+    
+    if not pdf_text:
+        print("No text extracted from the PDF.")
+        sys.exit(1)
 
     print("== LLM-Based Metadata Extraction ==")
     llm_metadata = extract_metadata_llm_full(pdf_text)
     print(json.dumps(llm_metadata, indent=2))
 
-    # print("\n== NER-Based Metadata Extraction ==")
-    # print(json.dumps(extract_metadata_ner(pdf_text), indent=2))
+    print("\n== NER-Based Metadata Extraction ==")
+    print(json.dumps(extract_metadata_ner(pdf_text), indent=2))
 
-    # print("\n== Phrase Matching Metadata Extraction ==")
-    # print(json.dumps(extract_metadata_phrases(pdf_text), indent=2))
+    print("\n== Phrase Matching Metadata Extraction ==")
+    print(json.dumps(extract_metadata_phrases(pdf_text), indent=2))
