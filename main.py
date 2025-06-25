@@ -19,7 +19,10 @@ from openai import RateLimitError
 from typing import Any
 
 # Configure logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Load environment variables from .env
@@ -282,313 +285,89 @@ IDEAL_TERMS = {
     }
 }
 
-def extract_metadata_llm_full(text):
-    # Split text into chunks (only first chunk used for now)
+def calculate_openai_cost(response, model):
+    """
+    Calculate the cost of an OpenAI API call based on token usage.
+    Uses current GPT-4 pricing as of June 2025.
+    """
+    # GPT-4 pricing (as of June 2025)
+    if model == "gpt-4":
+        input_cost_per_token = 0.00003  # $0.03 per 1K tokens
+        output_cost_per_token = 0.00006  # $0.06 per 1K tokens
+    else:
+        raise ValueError(f"Unsupported model: {model}")
+
+    usage = response.usage
+    input_cost = usage.prompt_tokens * input_cost_per_token
+    output_cost = usage.completion_tokens * output_cost_per_token
+    total_cost = input_cost + output_cost
+    return total_cost
+
+def validate_json(response: str, section: str) -> Optional[dict]:
+    """Basic JSON validation and error handling."""
+    try:
+        # Remove any non-JSON text
+        response = response.strip()
+        if response.startswith('```json'):
+            response = response[7:]  # Remove ```json
+        if response.endswith('```'):
+            response = response[:-3]  # Remove ```
+        
+        # Parse JSON
+        data = json.loads(response)
+        if not isinstance(data, dict):
+            logger.warning(f"Invalid {section} response: expected dict, got {type(data)}")
+            return None
+        return data
+    except json.JSONDecodeError as e:
+        logger.warning(f"JSON parse error in {section}: {e}")
+        return None
+    except Exception as e:
+        logger.warning(f"Error processing {section}: {e}")
+        return None
+
+def load_prompt(prompt_file, **kwargs):
+    """
+    Load and format a prompt from file with optional keyword arguments.
+    """
+    with open(prompt_file, 'r') as f:
+        prompt = f.read()
+    return prompt.format(**kwargs)
+
+
+def extract_metadata_llm_full(text, contract_name):
+    """
+    Extract metadata from text using LLM prompts.
+    """
     chunks = chunk_text(text)
-    # Initialize aggregated output
     aggregated_metadata = {
         "generic_metadata": {},
         "suggested_terms": {},
         "ideal_terms": {}
     }
+    total_cost = 0.0  # Track total cost of API calls
 
-    def validate_json(response: str, section: str) -> Optional[dict]:
-        """Basic JSON validation and error handling."""
+    for i, chunk in enumerate(chunks):
         try:
-            # Remove any non-JSON text
-            response = response.strip()
-            if response.startswith('```json'):
-                response = response[7:]  # Remove ```json
-            if response.endswith('```'):
-                response = response[:-3]  # Remove ```
-            
-            # Parse JSON
-            data = json.loads(response)
-            if not isinstance(data, dict):
-                logger.warning(f"Invalid {section} response: expected dict, got {type(data)}")
-                return None
-            return data
-        except json.JSONDecodeError as e:
-            logger.warning(f"JSON parse error in {section}: {e}")
-            return None
-        except Exception as e:
-            logger.warning(f"Error processing {section}: {e}")
-            return None
+            # Load and format prompts
+            generic_prompt = load_prompt('prompts/generic_metadata_prompt.txt', TEXT=chunk)
+            suggested_prompt = load_prompt('prompts/suggested_terms_prompt.txt', 
+                                        TEXT=chunk,
+                                        TERMS=', '.join(SUGGESTED_GENERIC_TERMS))
+            ideal_prompt = load_prompt('prompts/ideal_terms_prompt.txt', 
+                                     TEXT=chunk,
+                                     FINANCIAL_TERMS=', '.join(IDEAL_TERMS['FINANCIAL']),
+                                     POLICY_COMPLIANCE_TERMS=', '.join(IDEAL_TERMS['POLICY_COMPLIANCE']),
+                                     DATA_SHARING_TERMS=', '.join(IDEAL_TERMS['DATA_SHARING']),
+                                     PAYER_ACCOUNTABILITY_TERMS=', '.join(IDEAL_TERMS['PAYER_ACCOUNTABILITY']),
+                                     GOVERNANCE_TERMS=', '.join(IDEAL_TERMS['GOVERNANCE']))
 
-    for i, chunk in enumerate(chunks[:1]):
-        # First prompt: generic metadata and suggested terms
-        generic_prompt = f"""
-        You are analyzing a payer negotiation contract. Based on the text below:
-        1. Identify and extract key information about the contract
-        2. Structure the information in nested dictionaries with each field having:
-           - The exact field name (e.g., "payer_name", "provider_name")
-           - The value found in the text
-           - A description of why this information is important
-        3. Return ONLY a valid JSON object with this exact structure:
-        {{
-          "payer": {{
-            "name": "Blue Shield",
-            "description": "Identifies the healthcare insurer within the contract"
-          }},
-          "provider": {{
-            "name": "BHC Fremont Hospital",
-            "description": "Identifies the healthcare provider within the contract"
-          }},
-          "contract_details": {{
-            "start_date": "June 1, 2025",
-            "description": "Indicates when the contract becomes effective"
-          }},
-          "service": {{
-            "type": "Behavioral Health Services Acute Psychiatric Hospital",
-            "description": "Describes the type of healthcare services covered by the contract"
-          }},
-          "identifier": {{
-            "contract_id": "Docusign Envelope ID: 148E000D-0863-4C89-9250-62B82228D021",
-            "description": "Unique identifier for the contract"
-          }}
-        }}
-
-        Example output:
-        {{
-          "payer": {{
-            "name": "Blue Shield",
-            "description": "Identifies the healthcare insurer within the contract"
-          }},
-          "provider": {{
-            "name": "BHC Fremont Hospital",
-            "description": "Identifies the healthcare provider within the contract"
-          }}
-        }}
-
-        IMPORTANT: 
-        - Respond ONLY with a valid JSON object
-        - Use double quotes for all strings
-        - Do not include any other text or explanations
-        - If no terms are found, return an empty object for that section
-        - Focus on extracting concrete values, not just descriptions
-        - If a value is not found, leave it empty rather than guessing
-        - Use exact text from the contract where possible
-        - Include only the most relevant information
-
-        Text chunk {i+1}:
-        {chunk}
-        """
-        # Second prompt: ideal terms categories
-        ideal_terms_prompt = f"""
-        You are analyzing a payer negotiation contract. Based on the text below:
-        1. Look for specific values related to these ideal terms:
-           - FINANCIAL: {', '.join(IDEAL_TERMS['FINANCIAL'])}
-           - POLICY_COMPLIANCE: {', '.join(IDEAL_TERMS['POLICY_COMPLIANCE'])}
-           - DATA_SHARING: {', '.join(IDEAL_TERMS['DATA_SHARING'])}
-           - PAYER_ACCOUNTABILITY: {', '.join(IDEAL_TERMS['PAYER_ACCOUNTABILITY'])}
-           - GOVERNANCE: {', '.join(IDEAL_TERMS['GOVERNANCE'])}
-        2. For each term that you find, extract the exact value from the text
-        3. Return ONLY a valid JSON object with this exact structure:
-
-        Example output:
-        {{
-          "FINANCIAL": {{
-            "rate_sheets": "Exhibit C and Exhibit C-1",
-            "payment_terms": "Payment within timeframes mandated by applicable state or federal law"
-          }},
-          "POLICY_COMPLIANCE": {{
-            "clinical_guidelines": "Standard clinical guidelines"
-          }}
-        }}
-
-        IMPORTANT: 
-        - Respond ONLY with a valid JSON object
-        - Use double quotes for strings
-        - Return empty objects if no values found
-        - Use exact text from the contract
-        - Include all relevant information
-
-        Text chunk {i+1}:
-        {chunk}
-        """
-
-        # First prompt: generic metadata
-        generic_prompt = f"""
-        You are analyzing a payer negotiation contract. Based on the text below:
-        1. Identify and extract key information about the contract
-        2. Structure the information in nested dictionaries with each field having:
-           - The exact field name (e.g., "payer_name", "provider_name")
-           - The value found in the text
-           - A description of why this information is important
-        3. Return ONLY a valid JSON object with this exact structure:
-        {{
-          "payer": {{
-            "name": "Blue Shield",
-            "description": "Identifies the healthcare insurer within the contract"
-          }},
-          "provider": {{
-            "name": "BHC Fremont Hospital",
-            "description": "Identifies the healthcare provider within the contract"
-          }},
-          "contract_details": {{
-            "start_date": "June 1, 2025",
-            "description": "Indicates when the contract becomes effective"
-          }},
-          "service": {{
-            "type": "Behavioral Health Services Acute Psychiatric Hospital",
-            "description": "Describes the type of healthcare services covered by the contract"
-          }},
-          "identifier": {{
-            "contract_id": "Docusign Envelope ID: 148E000D-0863-4C89-9250-62B82228D021",
-            "description": "Unique identifier for the contract"
-          }}
-        }}
-
-        Example output:
-        {{
-          "payer": {{
-            "name": "Blue Shield",
-            "description": "Identifies the healthcare insurer within the contract"
-          }},
-          "provider": {{
-            "name": "BHC Fremont Hospital",
-            "description": "Identifies the healthcare provider within the contract"
-          }}
-        }}
-
-        IMPORTANT: 
-        - Respond ONLY with a valid JSON object
-        - Use double quotes for all strings
-        - Do not include any other text or explanations
-        - If no terms are found, return an empty object for that section
-        - Focus on extracting concrete values, not just descriptions
-        - If a value is not found, leave it empty rather than guessing
-        - Use exact text from the contract where possible
-        - Include only the most relevant information
-
-        Text chunk {i+1}:
-        {chunk}
-        """
-        # Second prompt: suggested terms
-        suggested_prompt = f"""
-        You are analyzing a payer negotiation contract. Based on the text below:
-        1. Look for values related to these specific terms:
-           {', '.join(SUGGESTED_GENERIC_TERMS)}
-        2. For each term that you find, extract the exact value from the text
-        3. Return ONLY a valid JSON object with this exact structure:
-        {{
-          "ID": "",
-          "TITLE": "",
-          "TYPE": "",
-          "PAYER NAME": "",
-          "PLAN TYPE": "",
-          "EXTERNAL ID": "",
-          "PROVIDER ENTITY": "",
-          "EFFECTIVE DATE": "",
-          "EXPIRATION DATE": "",
-          "STATUS": "",
-          "PROVIDER IDS": "",
-          "SIZE": "",
-          "CREATED AT": "",
-          "ADDITIONAL INFO SUBMISSION": "",
-          "APPEALS TIMELINE": "",
-          "CLAIM SUBMISSION": "",
-          "INITIAL TERM": "",
-          "INTEREST": "",
-          "MATERIAL BREACH CURE": "",
-          "PROMPT PAY": "",
-          "REFUND SUBMISSION": "",
-          "RENEWAL NOTICE TIMEFRAME": "",
-          "RENEWAL TERM": "",
-          "TERMINATION WITHOUT CAUSE": "",
-          "PAYMENT MODEL": "",
-          "NEGOTIATION STAGE": "",
-          "STATES": "",
-          "PROVIDERS COUNT": "",
-          "CONTRACT TYPE": "",
-          "ESTIMATED ANNUAL VALUE": "",
-          "FINANCIAL TERMS": "",
-          "HAS AMENDMENTS": "",
-          "AMENDMENTS COUNT": "",
-          "LAST AMENDMENT DATE": "",
-          "HAS QUALITY METRICS": "",
-          "RISK LEVEL": "",
-          "DELEGATE STATUS": "",
-          "METADATA CONTEXT": ""
-        }}
-
-        Example output:
-        {{
-          "ID": "doc id - 987398",
-          "TITLE": "amendment of this"
-        }}
-
-        IMPORTANT: 
-        - Respond ONLY with a valid JSON object
-        - Use double quotes for all strings
-        - Do not include any other text or explanations
-        - If no terms are found, return an empty object for that section
-        - Focus on extracting concrete values, not just descriptions
-        - If a value is not found, leave it empty rather than guessing
-        - Use exact text from the contract where possible
-        - Include only the most relevant information
-
-        Text chunk {i+1}:
-        {chunk}
-        """
-
-        # Third prompt: ideal terms categories
-        ideal_terms_prompt = f"""
-        You are analyzing a payer negotiation contract. Based on the text below:
-        1. Look for specific values related to these ideal terms:
-           - FINANCIAL: {', '.join(IDEAL_TERMS['FINANCIAL'].keys())}
-           - POLICY_COMPLIANCE: {', '.join(IDEAL_TERMS['POLICY_COMPLIANCE'].keys())}
-           - DATA_SHARING: {', '.join(IDEAL_TERMS['DATA_SHARING'].keys())}
-           - PAYER_ACCOUNTABILITY: {', '.join(IDEAL_TERMS['PAYER_ACCOUNTABILITY'].keys())}
-           - GOVERNANCE: {', '.join(IDEAL_TERMS['GOVERNANCE'].keys())}
-        2. For each term that you find, extract the exact value from the text
-        3. Return ONLY a valid JSON object with this exact structure:
-        {{
-          "FINANCIAL": {{
-            "rate_sheets": "Exhibit C and Exhibit C-1",
-            "payment_terms": "Payment within timeframes mandated by applicable state or federal law"
-          }},
-          "POLICY_COMPLIANCE": {{
-            "clinical_guidelines": "Standard clinical guidelines"
-          }},
-          "DATA_SHARING": {{
-            "claims_data": "Monthly detailed claims data feeds"
-          }},
-          "PAYER_ACCOUNTABILITY": {{
-            "prior_auth": "5 days routine, 1 day urgent"
-          }},
-          "GOVERNANCE": {{
-            "joc": "value"
-          }}
-        }}
-
-        Example output:
-        {{
-          "FINANCIAL": {{
-            "rate_sheets": "Exhibit C and Exhibit C-1",
-            "payment_terms": "Payment within timeframes mandated by applicable state or federal law"
-          }},
-          "POLICY_COMPLIANCE": {{
-            "clinical_guidelines": "Standard clinical guidelines"
-          }}
-        }}
-
-        IMPORTANT: 
-        - Respond ONLY with a valid JSON object
-        - Use double quotes for strings
-        - Return empty objects if no values found
-        - Use exact text from the contract
-        - Include all relevant information
-
-        Text chunk {i+1}:
-        {chunk}
-        """
-
-        # Call LLM and validate response
-        try:
             # Get generic metadata
             gen_resp = make_openai_request(prompt=generic_prompt, model="gpt-4")
             if gen_resp:
+                gen_cost = calculate_openai_cost(gen_resp, "gpt-4")
+                total_cost += gen_cost
+                logger.info(f"Generic metadata cost: ${gen_cost:.4f}")
                 generic_data = validate_json(gen_resp.choices[0].message.content, "generic_metadata")
                 if generic_data:
                     aggregated_metadata["generic_metadata"] = generic_data
@@ -598,6 +377,9 @@ def extract_metadata_llm_full(text):
             # Get suggested terms
             suggested_resp = make_openai_request(prompt=suggested_prompt, model="gpt-4")
             if suggested_resp:
+                suggested_cost = calculate_openai_cost(suggested_resp, "gpt-4")
+                total_cost += suggested_cost
+                logger.info(f"Suggested terms cost: ${suggested_cost:.4f}")
                 suggested_data = validate_json(suggested_resp.choices[0].message.content, "suggested_terms")
                 if suggested_data:
                     aggregated_metadata["suggested_terms"] = suggested_data
@@ -605,8 +387,11 @@ def extract_metadata_llm_full(text):
                 logger.warning(f"No response received for suggested terms in chunk {i+1}")
 
             # Get ideal terms
-            ideal_resp = make_openai_request(prompt=ideal_terms_prompt, model="gpt-4")
+            ideal_resp = make_openai_request(prompt=ideal_prompt, model="gpt-4")
             if ideal_resp:
+                ideal_cost = calculate_openai_cost(ideal_resp, "gpt-4")
+                total_cost += ideal_cost
+                logger.info(f"Ideal terms cost: ${ideal_cost:.4f}")
                 ideal_data = validate_json(ideal_resp.choices[0].message.content, "ideal_terms")
                 if ideal_data:
                     aggregated_metadata["ideal_terms"] = ideal_data
@@ -622,6 +407,10 @@ def extract_metadata_llm_full(text):
 
         time.sleep(1)
 
+    logger.info(f"Total OpenAI API cost: ${total_cost:.4f}")
+    
+    # Save results to output file
+    save_to_output(aggregated_metadata, contract_name, "llm")
     return aggregated_metadata
 
 # === NER METADATA EXTRACTION ===
@@ -630,20 +419,24 @@ def extract_metadata_ner(text):
         # ner_pipeline = pipeline("ner", model="dslim/bert-base-NER", grouped_entities=True)
         ner_pipeline = pipeline("ner", model="Jean-Baptiste/roberta-large-ner-english", grouped_entities=True)
     except Exception as e:
-        print("Error loading NER pipeline:", e)
+        logger.error(f"Error extracting NER metadata: {e}")
         return {}
 
-    entities = ner_pipeline(text)
-    extracted_entities = {}
+    ner_results = ner_pipeline(text)
+    combined_results = {}
+    for entity in ner_results:
+        if entity['entity_group'] not in combined_results:
+            combined_results[entity['entity_group']] = []
+        combined_results[entity['entity_group']].append({
+            'text': entity['word'],
+            'start': entity['start'],
+            'end': entity['end'],
+            'score': entity['score']
+        })
 
-    for ent in entities:
-        label = ent.get('entity_group', 'UNKNOWN')
-        value = ent.get('word', '')
-        if label not in extracted_entities:
-            extracted_entities[label] = []
-        extracted_entities[label].append(value)
-
-    return extracted_entities
+    # Save results to output file
+    save_to_output(combined_results, contract_name, "ner")
+    return combined_results
 
 # === LOAD SPACY MODEL ===
 def load_spacy_model(model_name="en_core_web_sm"):
@@ -697,7 +490,7 @@ if __name__ == "__main__":
     pdf_text = extract_pdf_text(pdf_path)
 
     print("== LLM-Based Metadata Extraction ==")
-    llm_metadata = extract_metadata_llm_full(pdf_text)
+    llm_metadata = extract_metadata_llm_full(pdf_text, contract_name)
     print(json.dumps(llm_metadata, indent=2))
     save_to_output(llm_metadata, contract_name, "llm")
 

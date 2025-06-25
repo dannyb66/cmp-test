@@ -1,0 +1,54 @@
+You are analyzing a payer negotiation contract. Based on the text below:
+1. Identify and extract key information about the contract
+2. Structure the information in nested dictionaries with each field having:
+   - The exact field name (e.g., "payer_name", "provider_name")
+   - The value found in the text
+   - A description of why this information is important
+3. Return ONLY a valid JSON object with this exact structure:
+{{
+  "payer": {{
+    "name": "Blue Shield",
+    "description": "Identifies the healthcare insurer within the contract"
+  }},
+  "provider": {{
+    "name": "BHC Fremont Hospital",
+    "description": "Identifies the healthcare provider within the contract"
+  }},
+  "contract_details": {{
+    "start_date": "June 1, 2025",
+    "description": "Indicates when the contract becomes effective"
+  }},
+  "service": {{
+    "type": "Behavioral Health Services Acute Psychiatric Hospital",
+    "description": "Describes the type of healthcare services covered by the contract"
+  }},
+  "identifier": {{
+    "contract_id": "Docusign Envelope ID: 148E000D-0863-4C89-9250-62B82228D021",
+    "description": "Unique identifier for the contract"
+  }}
+}}
+
+Example output:
+{{
+  "payer": {{
+    "name": "Blue Shield",
+    "description": "Identifies the healthcare insurer within the contract"
+  }},
+  "provider": {{
+    "name": "BHC Fremont Hospital",
+    "description": "Identifies the healthcare provider within the contract"
+  }}
+}}
+
+IMPORTANT: 
+- Respond ONLY with a valid JSON object
+- Use double quotes for all strings
+- Do not include any other text or explanations
+- If no terms are found, return an empty object for that section
+- Focus on extracting concrete values, not just descriptions
+- If a value is not found, leave it empty rather than guessing
+- Use exact text from the contract where possible
+- Include only the most relevant information
+
+Text:
+{TEXT}

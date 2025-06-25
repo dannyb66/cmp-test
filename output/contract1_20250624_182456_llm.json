@@ -1,0 +1,52 @@
+{
+  "generic_metadata": {
+    "payer": {
+      "name": "Blue Shield of California",
+      "description": "Identifies the healthcare insurer within the contract"
+    },
+    "provider": {
+      "name": "BHC Fremont Hospital, Inc., dba Fremont Hospital",
+      "description": "Identifies the healthcare provider within the contract"
+    },
+    "contract_details": {
+      "start_date": "June 1, 2025",
+      "description": "Indicates when the contract becomes effective"
+    },
+    "service": {
+      "type": "Behavioral Health Services Acute Psychiatric Hospital",
+      "description": "Describes the type of healthcare services covered by the contract"
+    },
+    "identifier": {
+      "contract_id": "Docusign Envelope ID: 148E000D-0863-4C89-9250-62B82228D021",
+      "description": "Unique identifier for the contract"
+    }
+  },
+  "suggested_terms": {
+    "ID": "148E000D-0863-4C89-9250-62B82228D021",
+    "TITLE": "Fremont Hospital Provider Agreement Behavioral Health Services Acute Psychiatric Hospital",
+    "PAYER NAME": "Blue Shield of California",
+    "EFFECTIVE DATE": "June 1, 2025",
+    "CLAIM SUBMISSION": "Claims Submission",
+    "PROVIDER ENTITY": "BHC Fremont Hospital, Inc., dba Fremont Hospital",
+    "TERMINATION WITHOUT CAUSE": "Termination Without Cause"
+  },
+  "ideal_terms": {
+    "FINANCIAL": {
+      "rate_sheets": "Compensation Amounts/Payment Schedule (Medicare Advantage Benefit Programs)",
+      "payment_terms": "Billing, Compensation & Charge Master Obligations"
+    },
+    "POLICY_COMPLIANCE": {},
+    "DATA_SHARING": {
+      "claims_data": "Claims Submission",
+      "eligibility_files": "Eligibility of Blue Shield Members"
+    },
+    "PAYER_ACCOUNTABILITY": {
+      "prior_auth": "Service Authorization",
+      "claims_accuracy": "Claims Overpayments and Recoveries"
+    },
+    "GOVERNANCE": {
+      "dispute_resolution": "Resolution of Disputes",
+      "annual_review": "Term & Termination"
+    }
+  }
+}

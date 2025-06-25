@@ -1,0 +1,46 @@
+{
+  "generic_metadata": {
+    "payer": {
+      "name": "Blue Shield of California",
+      "description": "Identifies the healthcare insurer within the contract"
+    },
+    "provider": {
+      "name": "Fremont Hospital",
+      "description": "Identifies the healthcare provider within the contract"
+    },
+    "contract_details": {
+      "start_date": "June 1, 2025",
+      "description": "Indicates when the contract becomes effective"
+    },
+    "service": {
+      "type": "Behavioral Health Services Acute Psychiatric Hospital",
+      "description": "Describes the type of healthcare services covered by the contract"
+    },
+    "identifier": {
+      "contract_id": "Docusign Envelope ID: 148E000D-0863-4C89-9250-62B82228D021",
+      "description": "Unique identifier for the contract"
+    }
+  },
+  "suggested_terms": {
+    "TITLE": "Behavioral Health Services Acute Psychiatric Hospital Agreement",
+    "PAYER NAME": "Blue Shield",
+    "PROVIDER ENTITY": "Fremont Hospital",
+    "EFFECTIVE DATE": "June 1, 2025",
+    "PAYMENT MODEL": "106% percent of the reimbursement established by the Medicare program",
+    "CLAIM SUBMISSION": "all Provider Services must be billed and coded in accordance with Blue Shield requirements as detailed in this Agreement and the Provider Manual",
+    "CLAIMS ACCURACY": "all Provider Services must be billed and coded in accordance with Blue Shield requirements as detailed in this Agreement and the Provider Manual"
+  },
+  "ideal_terms": {
+    "FINANCIAL": {
+      "rate_sheets": "Exhibit C and Exhibit C-1",
+      "payment_terms": "Blue Shield shall pay Hospital the following reimbursement"
+    },
+    "POLICY_COMPLIANCE": {
+      "payment_policies": "For Inpatient Services provided to a Member enrolled in a Blue Shield Medicare Advantage Benefit Program, Blue Shield shall pay Hospital the following reimbursement",
+      "clinical_guidelines": "all Provider Services must be billed and coded in accordance with Blue Shield requirements as detailed in this Agreement and the Provider Manual. Blue Shield's requirements are based on nationally recognized and industry standard coding structures, including, but not limited to, the National Uniform Billing Committee, the AMA Current Procedural Terminology, the Healthcare Common Procedure Coding System (HCPCS), Diagnosis Related Groups (DRG), and the appropriate International Classification of Diseases (ICD) code set as indicated by the Centers for Medicare and Medicaid Services (CMS)"
+    },
+    "DATA_SHARING": {},
+    "PAYER_ACCOUNTABILITY": {},
+    "GOVERNANCE": {}
+  }
+}

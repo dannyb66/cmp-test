@@ -1,0 +1,64 @@
+You are analyzing a payer negotiation contract. Based on the text below:
+1. Look for values related to these specific terms:
+   {TERMS}
+2. For each term that you find, extract the exact value from the text
+3. Return ONLY a valid JSON object with this exact structure:
+{{
+  "ID": "",
+  "TITLE": "",
+  "TYPE": "",
+  "PAYER NAME": "",
+  "PLAN TYPE": "",
+  "EXTERNAL ID": "",
+  "PROVIDER ENTITY": "",
+  "EFFECTIVE DATE": "",
+  "EXPIRATION DATE": "",
+  "STATUS": "",
+  "PROVIDER IDS": "",
+  "SIZE": "",
+  "CREATED AT": "",
+  "ADDITIONAL INFO SUBMISSION": "",
+  "APPEALS TIMELINE": "",
+  "CLAIM SUBMISSION": "",
+  "INITIAL TERM": "",
+  "INTEREST": "",
+  "MATERIAL BREACH CURE": "",
+  "PROMPT PAY": "",
+  "REFUND SUBMISSION": "",
+  "RENEWAL NOTICE TIMEFRAME": "",
+  "RENEWAL TERM": "",
+  "TERMINATION WITHOUT CAUSE": "",
+  "PAYMENT MODEL": "",
+  "NEGOTIATION STAGE": "",
+  "STATES": "",
+  "PROVIDERS COUNT": "",
+  "CONTRACT TYPE": "",
+  "ESTIMATED ANNUAL VALUE": "",
+  "FINANCIAL TERMS": "",
+  "HAS AMENDMENTS": "",
+  "AMENDMENTS COUNT": "",
+  "LAST AMENDMENT DATE": "",
+  "HAS QUALITY METRICS": "",
+  "RISK LEVEL": "",
+  "DELEGATE STATUS": "",
+  "METADATA CONTEXT": ""
+}}
+
+Example output:
+{{
+  "ID": "doc id - 987398",
+  "TITLE": "amendment of this"
+}}
+
+IMPORTANT: 
+- Respond ONLY with a valid JSON object
+- Use double quotes for all strings
+- Do not include any other text or explanations
+- If no terms are found, return an empty object for that section
+- Focus on extracting concrete values, not just descriptions
+- If a value is not found, leave it empty rather than guessing
+- Use exact text from the contract where possible
+- Include only the most relevant information
+
+Text:
+{TEXT}

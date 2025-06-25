@@ -1,0 +1,30 @@
+You are analyzing a payer negotiation contract. Based on the text below:
+1. Look for specific values related to these ideal terms:
+   - FINANCIAL: {FINANCIAL_TERMS}
+   - POLICY_COMPLIANCE: {POLICY_COMPLIANCE_TERMS}
+   - DATA_SHARING: {DATA_SHARING_TERMS}
+   - PAYER_ACCOUNTABILITY: {PAYER_ACCOUNTABILITY_TERMS}
+   - GOVERNANCE: {GOVERNANCE_TERMS}
+2. For each term that you find, extract the exact value from the text
+3. Return ONLY a valid JSON object with this exact structure:
+
+Example output:
+{{
+  "FINANCIAL": {{
+    "rate_sheets": "Exhibit C and Exhibit C-1",
+    "payment_terms": "Payment within timeframes mandated by applicable state or federal law"
+  }},
+  "POLICY_COMPLIANCE": {{
+    "clinical_guidelines": "Standard clinical guidelines"
+  }}
+}}
+
+IMPORTANT: 
+- Respond ONLY with a valid JSON object
+- Use double quotes for strings
+- Return empty objects if no values found
+- Use exact text from the contract
+- Include all relevant information
+
+Text:
+{TEXT}
