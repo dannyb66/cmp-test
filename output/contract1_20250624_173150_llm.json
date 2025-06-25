@@ -1,0 +1,47 @@
+{
+  "generic_metadata": {
+    "payer": {
+      "name": "Blue Shield of California",
+      "description": "Identifies the healthcare insurer within the contract"
+    },
+    "provider": {
+      "name": "BHC Fremont Hospital, Inc., dba Fremont Hospital",
+      "description": "Identifies the healthcare provider within the contract"
+    },
+    "contract_details": {
+      "start_date": "June 1, 2025",
+      "description": "Indicates when the contract becomes effective"
+    },
+    "service": {
+      "type": "Behavioral Health Services Acute Psychiatric Hospital",
+      "description": "Describes the type of healthcare services covered by the contract"
+    },
+    "identifier": {
+      "contract_id": "Docusign Envelope ID: 148E000D-0863-4C89-9250-62B82228D021",
+      "description": "Unique identifier for the contract"
+    }
+  },
+  "suggested_terms": {
+    "ID": "148E000D-0863-4C89-9250-62B82228D021",
+    "TITLE": "Fremont Hospital Provider Agreement Behavioral Health Services Acute Psychiatric Hospital",
+    "TYPE": "Behavioral Health Services Acute Psychiatric Hospital Agreement",
+    "PAYER NAME": "Blue Shield of California",
+    "PROVIDER ENTITY": "BHC Fremont Hospital, Inc., dba Fremont Hospital",
+    "EFFECTIVE DATE": "June 1, 2025",
+    "CLAIM SUBMISSION": "Claims Submission",
+    "DISPUTE RESOLUTION": "Claims Dispute Resolution Process, Arbitration of Disputes, Dispute Resolution Process for Disputes Unrelated to Claims Determinations",
+    "TERMINATION WITHOUT CAUSE": "Termination Without Cause"
+  },
+  "ideal_terms": {
+    "GOVERNANCE": {
+      "dispute_resolution": "Claims Dispute Resolution Process",
+      "annual_review": "This Agreement shall be effective June 1, 2025"
+    },
+    "POLICY_COMPLIANCE": {
+      "clinical_guidelines": "Standard clinical guidelines"
+    },
+    "FINANCIAL": {
+      "rate_sheets": "Exhibit C and Exhibit C-1"
+    }
+  }
+}

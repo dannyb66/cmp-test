@@ -1,0 +1,48 @@
+CONTRACT ID: CONTRACT123
+
+PARTIES:
+Provider: Healthcare Network
+Payer: Blue Cross Blue Shield
+
+EFFECTIVE DATE: January 1, 2024
+EXPIRATION DATE: December 31, 2026
+
+TERM:
+Initial Term: 3 years
+Renewal Term: 2 years
+Renewal Notice Timeframe: 90 days prior to expiration
+
+PAYMENT TERMS:
+Claims paid within 30 days
+Rate sheets attached as Exhibit A
+
+FINANCIAL:
+Rate sheets attached as Exhibit A
+Annual escalators: 3% increase
+No 'lesser of' language - full contracted rate applies
+
+POLICY:
+Anti-downcoding clause: payer cannot alter CPT codes without clinical justification
+Payment policies frozen as of contract signing
+
+DATA SHARING:
+Monthly claims data feeds
+Quarterly value-based program reporting
+Monthly eligibility files
+
+GOVERNANCE:
+Joint Operating Committee (JOC) meets quarterly
+Annual contract review process through JOC
+Dispute resolution: mediation then arbitration
+Shared savings program governance
+
+TERMINATION:
+90 days notice by either party
+No termination without cause
+
+AMENDMENTS:
+Last amendment date: June 1, 2024
+Amendments count: 2
+
+STATES:
+California, New York, Texas

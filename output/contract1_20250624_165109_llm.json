@@ -1,0 +1,49 @@
+{
+  "generic_metadata": {
+    "payer": {
+      "name": "Blue Shield of California",
+      "description": "Identifies the healthcare insurer within the contract"
+    },
+    "provider": {
+      "name": "BHC Fremont Hospital, Inc., dba Fremont Hospital",
+      "description": "Identifies the healthcare provider within the contract"
+    },
+    "contract_details": {
+      "start_date": "June 1, 2025",
+      "description": "Indicates when the contract becomes effective"
+    },
+    "service": {
+      "type": "Behavioral Health Services Acute Psychiatric Hospital",
+      "description": "Describes the type of healthcare services covered by the contract"
+    },
+    "identifier": {
+      "contract_id": "Docusign Envelope ID: 148E000D-0863-4C89-9250-62B82228D021",
+      "description": "Unique identifier for the contract"
+    }
+  },
+  "suggested_terms": {
+    "payment": {
+      "terms": "V. BILLING, COMPENSATION & CHARGE MASTER OBLIGATIONS 5.1 Claims Submission 5.2 Compensation Amounts 5.3 Copayments 5.4 Claims Overpayments and Recoveries 5.5 Payments to Subcontractors 5.6 BlueCard Claims EXHIBITS A - Provider Information B - Applicable Benefit Programs C - Compensation Amounts/Payment Schedule C-1 - Compensation Amounts/Payment Schedule (Medicare Advantage Benefit Programs)",
+      "description": "These terms seem to detail the conditions regarding financial transactions including claims, compensation, and payments."
+    },
+    "service": {
+      "terms": "B. Provider owns and operates an acute psychiatric hospital and is duly licensed and qualified to provide inpatient and outpatient behavioral health services to Members. C. Provider and Blue Shield desire that Provider provide inpatient and outpatient behavioral health services to Members, in accordance with the terms of this Agreement.",
+      "description": "The service terms reflect the services that the provider is obliged to offer to members under the agreement. In this case, it is inpatient and outpatient behavioral health services."
+    },
+    "contract": {
+      "terms": "X. TERM & TERMINATION 10.1 Term 10.2 Termination Without Cause 10.3 Termination for Cause 10.4 Immediate Termination 10.5 Effect of Termination 10.6 Termination Not an Exclusive Remedy 10.7 Survival 12.1 Entire Agreement 12.2 Amendments 12.3 Assignment 12.4 Third Party Beneficiaries 12.5 Notices 12.14 Preemption by Federal Law",
+      "description": "The contract terms provide details about contract duration, termination conditions, amendments, and general contractual provisions."
+    },
+    "compliance": {
+      "terms": "II. OBLIGATIONS OF PROVIDER 2.1 Provider Services 2.2 Location and Availability 2.3 Licensure & Accreditation 2.4 Standards for Provision of Care 2.5 Quality Improvement/Case Management/Utilization Management Programs 2.12 Directory Information Validation VIII. COOPERATION WITH AUDITS & CERTIFICATIONS 8.1 Disclosure of Records 8.2 Site Evaluations 8.3 Accreditation Surveys 8.4 Performance/Compliance Monitoring",
+      "description": "Compliance terms refer to the obligations of the provider in terms of service provision, standards, quality improvement, and cooperation with audits. They also outline the requirements for compliance monitoring."
+    }
+  },
+  "ideal_terms": {
+    "FINANCIAL": {},
+    "POLICY_COMPLIANCE": {},
+    "DATA_SHARING": {},
+    "PAYER_ACCOUNTABILITY": {},
+    "GOVERNANCE": {}
+  }
+}

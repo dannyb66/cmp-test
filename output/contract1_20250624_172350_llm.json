@@ -1,0 +1,75 @@
+{
+  "generic_metadata": {
+    "payer": {
+      "name": "Blue Shield of California",
+      "description": "Identifies the healthcare insurer within the contract"
+    },
+    "provider": {
+      "name": "BHC Fremont Hospital, Inc., dba Fremont Hospital",
+      "description": "Identifies the healthcare provider within the contract"
+    },
+    "contract_details": {
+      "start_date": "June 1, 2025",
+      "description": "Indicates when the contract becomes effective"
+    },
+    "service": {
+      "type": "Behavioral Health Services Acute Psychiatric Hospital",
+      "description": "Describes the type of healthcare services covered by the contract"
+    },
+    "identifier": {
+      "contract_id": "Docusign Envelope ID: 148E000D-0863-4C89-9250-62B82228D021",
+      "description": "Unique identifier for the contract"
+    }
+  },
+  "suggested_terms": {
+    "ID": "148E000D-0863-4C89-9250-62B82228D021",
+    "TITLE": "BEHAVIORAL HEALTH SERVICES ACUTE PSYCHIATRIC HOSPITAL AGREEMENT",
+    "TYPE": "",
+    "PAYER NAME": "Blue Shield of California",
+    "PLAN TYPE": "",
+    "EXTERNAL ID": "",
+    "PROVIDER ENTITY": "BHC Fremont Hospital, Inc., dba Fremont Hospital",
+    "EFFECTIVE DATE": "June 1, 2025",
+    "EXPIRATION DATE": "",
+    "STATUS": "",
+    "PROVIDER IDS": "",
+    "SIZE": "",
+    "CREATED AT": "",
+    "ADDITIONAL INFO SUBMISSION": "",
+    "APPEALS TIMELINE": "",
+    "CLAIM SUBMISSION": "",
+    "INITIAL TERM": "",
+    "INTEREST": "",
+    "MATERIAL BREACH CURE": "",
+    "PROMPT PAY": "",
+    "REFUND SUBMISSION": "",
+    "RENEWAL NOTICE TIMEFRAME": "",
+    "RENEWAL TERM": "",
+    "TERMINATION WITHOUT CAUSE": "",
+    "PAYMENT MODEL": "",
+    "NEGOTIATION STAGE": "",
+    "STATES": "",
+    "PROVIDERS COUNT": "",
+    "CONTRACT TYPE": "",
+    "ESTIMATED ANNUAL VALUE": "",
+    "FINANCIAL TERMS": "",
+    "HAS AMENDMENTS": "",
+    "AMENDMENTS COUNT": "",
+    "LAST AMENDMENT DATE": "",
+    "HAS QUALITY METRICS": "",
+    "RISK LEVEL": "",
+    "DELEGATE STATUS": "",
+    "METADATA CONTEXT": ""
+  },
+  "ideal_terms": {
+    "GOVERNANCE": {
+      "dispute_resolution": "9.1 Claims Dispute Resolution Process, 9.2 Arbitration of Disputes, 9.4 Dispute Resolution Process for Disputes Unrelated to Claims Determinations"
+    },
+    "FINANCIAL": {
+      "rate_sheets": "EXHIBITS C - Compensation Amounts/Payment Schedule, C-1 - Compensation Amounts/Payment Schedule (Medicare Advantage Benefit Programs)"
+    },
+    "DATA_SHARING": {
+      "claims_data": "12.20 Health Information Data and Record Sharing with Blue Shield"
+    }
+  }
+}

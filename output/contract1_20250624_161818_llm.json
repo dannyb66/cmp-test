@@ -1,0 +1,39 @@
+{
+  "generic_metadata": {
+    "payer": {
+      "name": "Blue Shield of California",
+      "description": "Identifies the healthcare insurer within the contract"
+    },
+    "provider": {
+      "name": "BHC Fremont Hospital, Inc., dba Fremont Hospital",
+      "description": "Identifies the healthcare provider within the contract"
+    },
+    "contract_details": {
+      "start_date": "June 1, 2025",
+      "description": "Indicates when the contract becomes effective"
+    },
+    "service": {
+      "type": "Behavioral Health Services Acute Psychiatric Hospital",
+      "description": "Describes the type of healthcare services covered by the contract"
+    },
+    "identifier": {
+      "contract_id": "Docusign Envelope ID: 148E000D-0863-4C89-9250-62B82228D021",
+      "description": "Unique identifier for the contract"
+    }
+  },
+  "suggested_terms": {},
+  "ideal_terms": {
+    "FINANCIAL": {
+      "rate_sheets": "Compensation Amounts/Payment Schedule and Compensation Amounts/Payment Schedule (Medicare Advantage Benefit Programs) in Exhibits A - Provider Information"
+    },
+    "GOVERNANCE": {
+      "dispute_resolution": "Claims Dispute Resolution Process, Arbitration of Disputes, and Dispute Resolution Process for Disputes Unrelated to Claims Determinations in RESOLUTION OF DISPUTES"
+    },
+    "PAYER_ACCOUNTABILITY": {
+      "claims_accuracy": "Claims Overpayments and Recoveries, and Payments to Subcontractors in BILLING, COMPENSATION & CHARGE MASTER OBLIGATIONS"
+    },
+    "DATA_SHARING": {
+      "claims_data": "Medical Records & Confidentiality and Health Information Data and Record Sharing with Blue Shield in GENERAL PROVISIONS"
+    }
+  }
+}
